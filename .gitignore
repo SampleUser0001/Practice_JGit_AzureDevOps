@@ -17,3 +17,7 @@ gradle-app.setting
 build
 
 auth.properties
+
+# log
+/app/logs
+!/app/logs/.gitkeep
