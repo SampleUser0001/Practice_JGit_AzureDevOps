@@ -18,21 +18,23 @@ import ittimfn.sample.jgit.enums.AuthPropertiesEnum;
 public class App {
 
     private static final String RESOURCES_HOME = Paths.get(System.getProperty("user.dir"),  "src", "main", "resources").toString();
-    private static final Path APPLICATION_PROPERTIES = Paths.get(RESOURCES_HOME, "application.properties");
-    private static final Path AUTH_PROPERTIES = Paths.get(RESOURCES_HOME, "auth.properties");
-
-    public String getGreeting() {
-        return "Hello World!";
-    }
+    public static final Path APPLICATION_PROPERTIES = Paths.get(RESOURCES_HOME, "application.properties");
+    public static final Path AUTH_PROPERTIES = Paths.get(RESOURCES_HOME, "auth.properties");
 
     public void exec(String[] args) throws InvalidRemoteException, TransportException, GitAPIException {
         new ListBranchesController().print();
     }
 
     public static void main(String[] args) throws IOException, InvalidRemoteException, TransportException, GitAPIException {
+        new App().exec(args);
+    }
+
+    public static void propertiesLoad() throws IOException {
         ApplicationPropertiesEnum.load(APPLICATION_PROPERTIES);
         AuthPropertiesEnum.load(AUTH_PROPERTIES);
+    }
 
-        new App().exec(args);
+    public App() throws IOException {
+        App.propertiesLoad();
     }
 }

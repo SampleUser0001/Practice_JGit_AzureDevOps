@@ -1,0 +1,9 @@
+version: '3'
+services:
+  nginx:
+    image: nginx
+    container_name: test_result
+    ports: 
+      - "5500:80"
+    volumes:
+      - ./app/build/reports/tests/test/:/usr/share/nginx/html/

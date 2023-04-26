@@ -17,6 +17,7 @@ import java.util.Map;
 
 /**
  * リモートリポジトリのブランチを取得する。
+ * 参考:https://github.com/centic9/jgit-cookbook/blob/master/src/main/java/org/dstadler/jgit/porcelain/ListRemoteRepository.java
  */
 public class ListBranchesController {
 

@@ -15,15 +15,16 @@
            %nは改行
         -->
         <Property name="format1">%d{yyyy/MM/dd HH:mm:ss.SSS} [%t] %-6p %c{10} line:%L %m%n</Property>
-        <Property name="logfile">./logs/testlog.log</Property>
-        <Property name="logfile-archive">./logs/testlog_%d{yyyy-MM-dd-HH-mm}.tar.gz</Property>
+        <Property name="system_out_print">%m%n</Property>
+        <Property name="logfile">./logs/applog.log</Property>
+        <Property name="logfile-archive">./logs/applog_%d{yyyy-MM-dd-HH-mm}.tar.gz</Property>
     </Properties>
     
     <Appenders>
         <!-- コンソールに出力する設定 -->
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout>
-                <pattern>${format1}</pattern>
+                <pattern>${system_out_print}</pattern>
             </PatternLayout>
         </Console>
 

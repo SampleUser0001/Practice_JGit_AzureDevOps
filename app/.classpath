@@ -33,17 +33,17 @@
 			<attribute name="gradle_used_by_scope" value=""/>
 		</attributes>
 	</classpathentry>
-	<classpathentry sourcepath="/home/ubuntuuser/.gradle/caches/caches/modules-2/files-2.1/org.eclipse.jgit/org.eclipse.jgit/6.5.0.202303070854-r/406f0394dc2a8d9b3e6ee45da018eb640e373cd3/org.eclipse.jgit-6.5.0.202303070854-r-sources.jar" kind="lib" path="/home/ubuntuuser/.gradle/caches/caches/modules-2/files-2.1/org.eclipse.jgit/org.eclipse.jgit/6.5.0.202303070854-r/a846f632cf00da830745b721807d05ddf3e0790f/org.eclipse.jgit-6.5.0.202303070854-r.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry sourcepath="/home/ubuntuuser/.gradle/caches/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-core/2.20.0/dcff7bf4ae8a02121c3d9ea326f4c1e8efbf9306/log4j-core-2.20.0-sources.jar" kind="lib" path="/home/ubuntuuser/.gradle/caches/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-core/2.20.0/eb2a9a47b1396e00b5eee1264296729a70565cc0/log4j-core-2.20.0.jar">
 		<attributes>
 			<attribute name="gradle_used_by_scope" value="main,test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="/home/ubuntuuser/.gradle/caches/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.20.0/646229509a21876eb5e6434f24ec3164665c6c38/log4j-api-2.20.0-sources.jar" kind="lib" path="/home/ubuntuuser/.gradle/caches/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.20.0/1fe6082e660daf07c689a89c94dc0f49c26b44bb/log4j-api-2.20.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="/home/ubuntuuser/.gradle/caches/caches/modules-2/files-2.1/org.eclipse.jgit/org.eclipse.jgit/6.5.0.202303070854-r/406f0394dc2a8d9b3e6ee45da018eb640e373cd3/org.eclipse.jgit-6.5.0.202303070854-r-sources.jar" kind="lib" path="/home/ubuntuuser/.gradle/caches/caches/modules-2/files-2.1/org.eclipse.jgit/org.eclipse.jgit/6.5.0.202303070854-r/a846f632cf00da830745b721807d05ddf3e0790f/org.eclipse.jgit-6.5.0.202303070854-r.jar">
 		<attributes>
 			<attribute name="gradle_used_by_scope" value="main,test"/>
 		</attributes>
@@ -112,6 +112,12 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="/home/ubuntuuser/.gradle/caches/caches/modules-2/files-2.1/org.junit.jupiter/junit-jupiter/5.9.1/5fd01c33132462aab3905cb74bd1097a713ab91a/junit-jupiter-5.9.1-sources.jar" kind="lib" path="/home/ubuntuuser/.gradle/caches/caches/modules-2/files-2.1/org.junit.jupiter/junit-jupiter/5.9.1/9274d3757e224bc02eae367bd481062a263c150b/junit-jupiter-5.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="/home/ubuntuuser/.gradle/caches/caches/modules-2/files-2.1/org.hamcrest/hamcrest/2.2/a0a13cfc629420efb587d954f982c4c6a100da25/hamcrest-2.2-sources.jar" kind="lib" path="/home/ubuntuuser/.gradle/caches/caches/modules-2/files-2.1/org.hamcrest/hamcrest/2.2/1820c0968dba3a11a1b30669bb1f01978a91dedc/hamcrest-2.2.jar">
 		<attributes>
 			<attribute name="gradle_used_by_scope" value="test"/>
 			<attribute name="test" value="true"/>

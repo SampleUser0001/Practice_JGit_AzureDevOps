@@ -18,6 +18,8 @@ build
 
 auth.properties
 
+/app/bin
+
 # log
 /app/logs
 !/app/logs/.gitkeep
