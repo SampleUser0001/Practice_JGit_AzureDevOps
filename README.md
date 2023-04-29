@@ -2,7 +2,16 @@
 JGitを使ってみる。リポジトリはAzure DevOpsを使う。
 
 - [Practice\_JGit\_AzureDevOps](#practice_jgit_azuredevops)
+  - [実行](#実行)
   - [参考](#参考)
+
+## 実行
+
+``` bash
+./gradlew test
+```
+
+実行結果は`logs/testlog.log`を参照。
 
 ## 参考
 

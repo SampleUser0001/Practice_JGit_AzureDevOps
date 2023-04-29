@@ -1,13 +1,15 @@
-package ittimfn.sample.jgit.controller.remote;
+package ittimfn.sample.jgit.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidRefNameException;
+import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
+import org.eclipse.jgit.api.errors.RefNotFoundException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
@@ -15,19 +17,17 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.transport.CredentialsProvider;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 
-import ittimfn.sample.jgit.enums.AuthPropertiesEnum;
+import ittimfn.sample.jgit.Util;
 import lombok.Data;
 
 /**
  * 参考：https://github.com/centic9/jgit-cookbook/blob/master/src/main/java/org/dstadler/jgit/porcelain/ShowBranchDiff.java
  */
 @Data
-public class RemoteBranchesDiffController {
+public class BranchesDiffController {
 
     private Logger logger = LogManager.getLogger();
     
@@ -39,33 +39,18 @@ public class RemoteBranchesDiffController {
 
     private Repository repository;
 
-    public RemoteBranchesDiffController(String targetBranch, String sourceBranch) {
+    public BranchesDiffController(Repository repository, String targetBranch, String sourceBranch) {
+        this.repository = repository;
         this.targetBranch = targetBranch;
         this.sourceBranch = sourceBranch;
     }
 
     public List<DiffEntry> getDiff() throws IOException, GitAPIException {
-        this.repository = this.getRemoteRepository(
-            AuthPropertiesEnum.USER.getPropertiesValue(),
-            AuthPropertiesEnum.TOKEN.getPropertiesValue(),
-            AuthPropertiesEnum.URL.getPropertiesValue());
 
         logger.info(repository);
         logger.info("{} -> {}", sourceBranch, targetBranch);
 
         return this.getDiffEntryList(repository, targetBranch, sourceBranch);
-
-    }
-
-    private Repository getRemoteRepository(String user, String token, String URL) {
-        CredentialsProvider cp = new UsernamePasswordCredentialsProvider(user, token);
-
-        return Git.lsRemoteRepository()
-                  .setHeads(true)
-                  .setTags(true)
-                  .setRemote(URL)
-                  .setCredentialsProvider(cp)
-                  .getRepository();
     }
 
     private List<DiffEntry> getDiffEntryList(Repository repository, String targetBranch, String sourceBranch) throws GitAPIException, IOException {
@@ -74,9 +59,11 @@ public class RemoteBranchesDiffController {
         return new Git(repository).diff().setOldTree(target).setNewTree(source).call();
     }
     
-    private AbstractTreeIterator prepareTreeParser(Repository repository, String ref) throws IOException {
+    private AbstractTreeIterator prepareTreeParser(Repository repository, String branch) throws IOException, RefAlreadyExistsException, RefNotFoundException, InvalidRefNameException, GitAPIException {
         // from the commit we can build the tree which allows us to construct the TreeParser
-        Ref head = repository.exactRef(ref);
+        logger.info("branch : {}", branch);
+        CreateBranchController.createBranch(repository, branch);
+        Ref head = repository.exactRef(Util.branchToRef(branch));
         try (RevWalk walk = new RevWalk(repository)) {
             RevCommit commit = walk.parseCommit(head.getObjectId());
             RevTree tree = walk.parseTree(commit.getTree().getId());
