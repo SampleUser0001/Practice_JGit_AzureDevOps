@@ -1,81 +1,65 @@
 package ittimfn.sample.jgit.controller;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRefNameException;
 import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
 import org.eclipse.jgit.api.errors.RefNotFoundException;
-import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.lib.ObjectReader;
-import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevTree;
-import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.treewalk.AbstractTreeIterator;
-import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 
-import ittimfn.sample.jgit.Util;
-import lombok.Data;
-
-/**
- * 参考：https://github.com/centic9/jgit-cookbook/blob/master/src/main/java/org/dstadler/jgit/porcelain/ShowBranchDiff.java
- */
-@Data
 public class PullRequestDiffController {
-
-    private Logger logger = LogManager.getLogger();
     
-    private String targetBranch;
-    private String sourceBranch;
-
-    private AbstractTreeIterator sourceTree;
-    private AbstractTreeIterator targetTree;
-
     private Repository repository;
 
-    public PullRequestDiffController(Repository repository, String targetBranch, String sourceBranch) {
+    public PullRequestDiffController(Repository repository) {
         this.repository = repository;
-        this.targetBranch = targetBranch;
-        this.sourceBranch = sourceBranch;
     }
 
-    public List<DiffEntry> getDiff() throws IOException, GitAPIException {
+    public List<String> diff(String targetBranch, String sourceBranch) throws IOException, InterruptedException, RefAlreadyExistsException, RefNotFoundException, InvalidRefNameException, GitAPIException {
+        CreateBranchController.createBranch(this.repository, targetBranch);
+        CreateBranchController.createBranch(this.repository, sourceBranch);
 
-        logger.info(repository);
-        logger.info("{} -> {}", sourceBranch, targetBranch);
-
-        return this.getDiffEntryList(repository, targetBranch, sourceBranch);
-    }
-
-    private List<DiffEntry> getDiffEntryList(Repository repository, String targetBranch, String sourceBranch) throws GitAPIException, IOException {
-        AbstractTreeIterator target = prepareTreeParser(repository, targetBranch);
-        AbstractTreeIterator source = prepareTreeParser(repository, sourceBranch);
-        return new Git(repository).diff().setOldTree(target).setNewTree(source).call();
-    }
-    
-    private AbstractTreeIterator prepareTreeParser(Repository repository, String branch) throws IOException, RefAlreadyExistsException, RefNotFoundException, InvalidRefNameException, GitAPIException {
-        // from the commit we can build the tree which allows us to construct the TreeParser
-        logger.info("branch : {}", branch);
-        CreateBranchController.createBranch(repository, branch);
-        Ref head = repository.exactRef(Util.branchToRef(branch));
-        try (RevWalk walk = new RevWalk(repository)) {
-            RevCommit commit = walk.parseCommit(head.getObjectId());
-            RevTree tree = walk.parseTree(commit.getTree().getId());
-
-            CanonicalTreeParser treeParser = new CanonicalTreeParser();
-            try (ObjectReader reader = repository.newObjectReader()) {
-                treeParser.reset(reader, tree.getId());
-            }
-
-            walk.dispose();
-
-            return treeParser;
+        File gitBash = this.createGitDiffShell(targetBranch, sourceBranch);
+        try {
+            return this.bashExec(gitBash);
+        } finally {
+            gitBash.deleteOnExit();
         }
     }
+
+    private File createGitDiffShell(String targetBranch, String sourceBranch) throws IOException {
+        File gitMergeBase = File.createTempFile("jgit", ".sh");
+        try(BufferedWriter writer = Files.newBufferedWriter(gitMergeBase.toPath(), Charset.forName("UTF-8"), StandardOpenOption.APPEND)) {
+            writer.write("#!/bin/bash\n");
+            writer.write("cd " + this.repository.getDirectory() + "\n");
+            writer.write(String.format("git diff --name-status %s...%s\n", targetBranch, sourceBranch));
+        }
+        return gitMergeBase;
+    }
+
+    private List<String> bashExec(File gitBash) throws InterruptedException, IOException {
+        List<String> diffList = new ArrayList<String>();
+
+        ProcessBuilder pb = new ProcessBuilder("bash", gitBash.toString());
+        Process process = pb.start();
+        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            diffList = buffer.lines()
+                             .toList();
+                  
+        }
+        process.waitFor();
+        return diffList;
+    }
+
 }

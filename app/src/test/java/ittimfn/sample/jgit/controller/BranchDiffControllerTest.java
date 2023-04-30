@@ -26,7 +26,7 @@ import ittimfn.sample.jgit.enums.AuthPropertiesEnum;
 public class BranchDiffControllerTest {
     private Logger logger = LogManager.getLogger();
     
-    public PullRequestDiffController controller;
+    public DiffController controller;
 
     private CloneRepositoryController gitCloneController;
 
@@ -41,16 +41,16 @@ public class BranchDiffControllerTest {
                 AuthPropertiesEnum.USER.getPropertiesValue(),
                 AuthPropertiesEnum.TOKEN.getPropertiesValue());
         this.gitCloneController.gitClone();
-        this.controller = new PullRequestDiffController(
+        this.controller = new DiffController(
             this.gitCloneController.getRepository(), null, null);
 
-        prepareTreeParser = PullRequestDiffController.class.getDeclaredMethod(
+        prepareTreeParser = DiffController.class.getDeclaredMethod(
             "prepareTreeParser",
             Repository.class, String.class
         );
         prepareTreeParser.setAccessible(true);
 
-        getDiffEntryList = PullRequestDiffController.class.getDeclaredMethod(
+        getDiffEntryList = DiffController.class.getDeclaredMethod(
             "getDiffEntryList",
              Repository.class, String.class, String.class);
         getDiffEntryList.setAccessible(true);

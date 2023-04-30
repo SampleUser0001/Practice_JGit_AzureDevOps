@@ -2,10 +2,75 @@
 JGitを使ってみる。リポジトリはAzure DevOpsを使う。
 
 - [Practice\_JGit\_AzureDevOps](#practice_jgit_azuredevops)
+  - [総評](#総評)
+    - [CloneRepositoryController.java](#clonerepositorycontrollerjava)
   - [実行](#実行)
   - [参考](#参考)
 
+## 総評
 
+Javaでgitを実行したかったが、ドキュメントが足りずやりたいこと(※)ができなかった。（git clone + git commandすればいいという結論になった。）  
+リポジトリのcloneだけはJGitを使ったほうが都合が良さそうなので、cloneのみドキュメントに残す。
+
+※具体的には`git diff $target_branch...$source_branch`。
+
+### CloneRepositoryController.java
+
+``` java
+package ittimfn.sample.jgit.controller;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidRemoteException;
+import org.eclipse.jgit.api.errors.TransportException;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+
+import lombok.Getter;
+
+@Getter
+public class CloneRepositoryController {
+
+    private String repoUrl;
+    private String user;
+    private String token;
+
+    private Path repoDir;
+    private Repository repository;
+    private Git git;
+
+    public CloneRepositoryController(String url, String user, String token) throws IOException {
+        this.user = user;
+        this.token = token;
+        this.repoDir = Files.createTempDirectory(null);
+        this.repoUrl = url;
+    }
+
+    public void gitClone() throws IOException, InvalidRemoteException, TransportException, GitAPIException {
+
+        CredentialsProvider cp = new UsernamePasswordCredentialsProvider(this.user, this.token);
+        this.git = Git.cloneRepository()
+                      .setURI(this.repoUrl)
+                      .setDirectory(this.repoDir.toFile())
+                      .setCredentialsProvider(cp)
+                      .setCloneAllBranches(true)
+                      .call();
+
+        this.repository = this.git.getRepository();
+    }
+
+    public void rmdir() throws IOException {
+        this.repoDir.toFile().deleteOnExit();
+    }
+
+}
+
+```
 
 ## 実行
 
