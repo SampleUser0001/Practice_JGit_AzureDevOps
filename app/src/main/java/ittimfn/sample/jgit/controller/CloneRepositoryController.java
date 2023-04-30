@@ -17,11 +17,11 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
+import ittimfn.sample.jgit.enums.AuthPropertiesEnum;
 import lombok.Getter;
 
 @Getter
 public class CloneRepositoryController {
-    private static final String TMP_REPOSITORY_HOME = Paths.get("/", "tmp", "JGit_Repository").toString();
 
     private String repoUrl;
     private String user;
@@ -31,11 +31,11 @@ public class CloneRepositoryController {
     private Repository repository;
     private Git git;
 
-    public CloneRepositoryController(String repoUrl, String user, String token) {
+    public CloneRepositoryController(String url, String user, String token) throws IOException {
         this.user = user;
         this.token = token;
-        this.repoDir = Paths.get(TMP_REPOSITORY_HOME, RandomStringUtils.randomAlphanumeric(8));
-        this.repoUrl = repoUrl;
+        this.repoDir = Files.createTempDirectory(null);
+        this.repoUrl = url;
     }
 
     public void gitClone() throws IOException, InvalidRemoteException, TransportException, GitAPIException {
@@ -52,10 +52,7 @@ public class CloneRepositoryController {
     }
 
     public void rmdir() throws IOException {
-        Files.walk(this.repoDir)
-             .sorted(Comparator.reverseOrder())
-             .map(Path::toFile)
-             .forEach(File::delete);
+        this.repoDir.toFile().deleteOnExit();
     }
 
 }

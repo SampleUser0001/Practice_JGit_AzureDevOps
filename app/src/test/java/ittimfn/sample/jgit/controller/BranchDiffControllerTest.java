@@ -15,7 +15,6 @@ import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.Repository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.*;
@@ -27,14 +26,12 @@ import ittimfn.sample.jgit.enums.AuthPropertiesEnum;
 public class BranchDiffControllerTest {
     private Logger logger = LogManager.getLogger();
     
-    public BranchesDiffController controller;
+    public PullRequestDiffController controller;
 
     private CloneRepositoryController gitCloneController;
 
-    private Method getRemoteRepository;
     private Method prepareTreeParser;
     private Method getDiffEntryList;
-    
 
     @BeforeEach
     public void setup() throws IOException, NoSuchMethodException, SecurityException, InvalidRemoteException, TransportException, GitAPIException {
@@ -44,16 +41,16 @@ public class BranchDiffControllerTest {
                 AuthPropertiesEnum.USER.getPropertiesValue(),
                 AuthPropertiesEnum.TOKEN.getPropertiesValue());
         this.gitCloneController.gitClone();
-        this.controller = new BranchesDiffController(
+        this.controller = new PullRequestDiffController(
             this.gitCloneController.getRepository(), null, null);
 
-        prepareTreeParser = BranchesDiffController.class.getDeclaredMethod(
+        prepareTreeParser = PullRequestDiffController.class.getDeclaredMethod(
             "prepareTreeParser",
             Repository.class, String.class
         );
         prepareTreeParser.setAccessible(true);
 
-        getDiffEntryList = BranchesDiffController.class.getDeclaredMethod(
+        getDiffEntryList = PullRequestDiffController.class.getDeclaredMethod(
             "getDiffEntryList",
              Repository.class, String.class, String.class);
         getDiffEntryList.setAccessible(true);

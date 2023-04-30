@@ -27,7 +27,7 @@ import lombok.Data;
  * 参考：https://github.com/centic9/jgit-cookbook/blob/master/src/main/java/org/dstadler/jgit/porcelain/ShowBranchDiff.java
  */
 @Data
-public class BranchesDiffController {
+public class PullRequestDiffController {
 
     private Logger logger = LogManager.getLogger();
     
@@ -39,7 +39,7 @@ public class BranchesDiffController {
 
     private Repository repository;
 
-    public BranchesDiffController(Repository repository, String targetBranch, String sourceBranch) {
+    public PullRequestDiffController(Repository repository, String targetBranch, String sourceBranch) {
         this.repository = repository;
         this.targetBranch = targetBranch;
         this.sourceBranch = sourceBranch;
@@ -54,8 +54,8 @@ public class BranchesDiffController {
     }
 
     private List<DiffEntry> getDiffEntryList(Repository repository, String targetBranch, String sourceBranch) throws GitAPIException, IOException {
-        AbstractTreeIterator source = prepareTreeParser(repository, sourceBranch);
         AbstractTreeIterator target = prepareTreeParser(repository, targetBranch);
+        AbstractTreeIterator source = prepareTreeParser(repository, sourceBranch);
         return new Git(repository).diff().setOldTree(target).setNewTree(source).call();
     }
     
